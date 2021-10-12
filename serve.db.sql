@@ -1,3 +1,12 @@
+DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS user_qualified_roles CASCADE;
+DROP TABLE IF EXISTS roles CASCADE;
+DROP TABLE IF EXISTS event_template_required_roles CASCADE;
+DROP TABLE IF EXISTS event_templates CASCADE;
+DROP TABLE IF EXISTS scheduled_events CASCADE;
+DROP TABLE IF EXISTS scheduled_users CASCADE;
+DROP TABLE IF EXISTS privileges CASCADE;
+
 CREATE TABLE "users" (
   "u_id" int PRIMARY KEY NOT NULL,
   "email" text UNIQUE NOT NULL,
@@ -5,11 +14,11 @@ CREATE TABLE "users" (
   "first" text,
   "last" text,
   "active" bool NOT NULL,
-  "privilege" text
+  "p_id" int
 );
 
-CREATE TABLE "user_roles" (
-  "ur_id" int PRIMARY KEY NOT NULL,
+CREATE TABLE "user_qualified_roles" (
+  "uqr_id" int PRIMARY KEY NOT NULL,
   "user_id" int,
   "role_id" int
 );
@@ -19,16 +28,15 @@ CREATE TABLE "roles" (
   "title" text NOT NULL
 );
 
-CREATE TABLE "event_roles" (
-  "er_id" int PRIMARY KEY NOT NULL,
+CREATE TABLE "event_template_required_roles" (
+  "etrr_id" int PRIMARY KEY NOT NULL,
   "role_id" int,
   "event_id" int
 );
 
-CREATE TABLE "events" (
+CREATE TABLE "event_templates" (
   "e_id" int PRIMARY KEY NOT NULL,
   "e_name" text NOT NULL,
-  "r_id" int[],
   "e_descr" text
 );
 
@@ -42,20 +50,29 @@ CREATE TABLE "scheduled_events" (
   "end_time" timestamp
 );
 
-CREATE TABLE "privileges" (
-  "name" text PRIMARY KEY NOT NULL
+CREATE TABLE "scheduled_users" (
+  "su_id" int PRIMARY KEY NOT NULL,
+  "scheduled_event" int,
+  "u_id" int
 );
 
-ALTER TABLE "users" ADD FOREIGN KEY ("privilege") REFERENCES "privileges" ("name");
+CREATE TABLE "privileges" (
+  "p_id" int PRIMARY KEY NOT NULL,
+  "name" text NOT NULL
+);
 
-ALTER TABLE "user_roles" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("u_id");
+ALTER TABLE "users" ADD FOREIGN KEY ("p_id") REFERENCES "privileges" ("p_id");
 
-ALTER TABLE "user_roles" ADD FOREIGN KEY ("role_id") REFERENCES "roles" ("r_id");
+ALTER TABLE "user_qualified_roles" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("u_id");
 
-ALTER TABLE "event_roles" ADD FOREIGN KEY ("role_id") REFERENCES "roles" ("r_id");
+ALTER TABLE "user_qualified_roles" ADD FOREIGN KEY ("role_id") REFERENCES "roles" ("r_id");
 
-ALTER TABLE "event_roles" ADD FOREIGN KEY ("event_id") REFERENCES "events" ("e_id");
+ALTER TABLE "event_template_required_roles" ADD FOREIGN KEY ("role_id") REFERENCES "roles" ("r_id");
 
-ALTER TABLE "events" ADD FOREIGN KEY ("r_id") REFERENCES "roles" ("r_id");
+ALTER TABLE "event_template_required_roles" ADD FOREIGN KEY ("event_id") REFERENCES "event_templates" ("e_id");
 
-ALTER TABLE "scheduled_events" ADD FOREIGN KEY ("e_id") REFERENCES "events" ("e_id");
+ALTER TABLE "scheduled_events" ADD FOREIGN KEY ("e_id") REFERENCES "event_templates" ("e_id");
+
+ALTER TABLE "scheduled_users" ADD FOREIGN KEY ("scheduled_event") REFERENCES "scheduled_events" ("se_id");
+
+ALTER TABLE "scheduled_users" ADD FOREIGN KEY ("u_id") REFERENCES "users" ("u_id");
