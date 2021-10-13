@@ -14,7 +14,7 @@ CREATE TABLE "users" (
   "first" text,
   "last" text,
   "active" bool NOT NULL,
-  "p_id" int
+  "is_admin" bool NOT NULL
 );
 
 CREATE TABLE "user_qualified_roles" (
@@ -55,13 +55,6 @@ CREATE TABLE "scheduled_users" (
   "scheduled_event" int,
   "u_id" int
 );
-
-CREATE TABLE "privileges" (
-  "p_id" int PRIMARY KEY NOT NULL,
-  "name" text NOT NULL
-);
-
-ALTER TABLE "users" ADD FOREIGN KEY ("p_id") REFERENCES "privileges" ("p_id");
 
 ALTER TABLE "user_qualified_roles" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("u_id");
 
