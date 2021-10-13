@@ -9,11 +9,11 @@ const express = require("express");
 const { ensureCorrectUserOrAdmin, ensureAdmin } = require("../middleware/auth");
 const { BadRequestError } = require("../expressError");
 const User = require("../models/user");
-const { createToken } = require("../helpers/tokens");
-const userNewSchema = require("../schemas/userNew.json");
-const userUpdateSchema = require("../schemas/userUpdate.json");
+const userNewSchema = require("../schemas/userSignUp.json");
 
 const router = express.Router();
+
+/** Create a new user */
 
 router.post("/", async (req, res, next) => {
   try {
@@ -22,9 +22,10 @@ router.post("/", async (req, res, next) => {
       const errs = validator.errors.map((e) => e.stack);
       throw new BadRequestError(errs);
     }
-
+    debugger;
     const user = await User.register(req.body);
-    if (res.locals.user.isAdmin) {
+    console.log("hello");
+    if (res.locals && res.locals.user) {
       return res.status(201).json({ user });
     }
     const token = jwt.sign(
@@ -36,3 +37,5 @@ router.post("/", async (req, res, next) => {
     return next(err);
   }
 });
+
+module.exports = router;

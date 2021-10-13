@@ -8,8 +8,8 @@ DROP TABLE IF EXISTS scheduled_users CASCADE;
 DROP TABLE IF EXISTS privileges CASCADE;
 
 CREATE TABLE "users" (
-  "u_id" int PRIMARY KEY NOT NULL,
-  "email" text UNIQUE NOT NULL,
+  "u_id" SERIAL PRIMARY KEY,
+  "username" text UNIQUE NOT NULL,
   "password" text NOT NULL,
   "first" text,
   "last" text,
@@ -18,30 +18,30 @@ CREATE TABLE "users" (
 );
 
 CREATE TABLE "user_qualified_roles" (
-  "uqr_id" int PRIMARY KEY NOT NULL,
+  "uqr_id" SERIAL PRIMARY KEY,
   "user_id" int,
   "role_id" int
 );
 
 CREATE TABLE "roles" (
-  "r_id" int PRIMARY KEY NOT NULL,
+  "r_id" SERIAL PRIMARY KEY,
   "title" text NOT NULL
 );
 
 CREATE TABLE "event_template_required_roles" (
-  "etrr_id" int PRIMARY KEY NOT NULL,
+  "etrr_id" SERIAL PRIMARY KEY,
   "role_id" int,
   "event_id" int
 );
 
 CREATE TABLE "event_templates" (
-  "e_id" int PRIMARY KEY NOT NULL,
+  "e_id" SERIAL PRIMARY KEY,
   "e_name" text NOT NULL,
   "e_descr" text
 );
 
 CREATE TABLE "scheduled_events" (
-  "se_id" int PRIMARY KEY NOT NULL,
+  "se_id" SERIAL PRIMARY KEY,
   "e_id" int,
   "location" text NOT NULL,
   "start_date" date NOT NULL,
@@ -51,7 +51,7 @@ CREATE TABLE "scheduled_events" (
 );
 
 CREATE TABLE "scheduled_users" (
-  "su_id" int PRIMARY KEY NOT NULL,
+  "su_id" SERIAL PRIMARY KEY,
   "scheduled_event" int,
   "u_id" int
 );

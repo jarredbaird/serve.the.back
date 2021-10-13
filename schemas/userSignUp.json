@@ -5,34 +5,29 @@
   "properties": {
     "username": {
       "type": "string",
-      "minLength": 1,
-      "maxLength": 30
+      "minLength": 6,
+      "maxLength": 60,
+      "format": "email"
     },
     "password": {
       "type": "string",
       "minLength": 5,
       "maxLength": 20
     },
-    "firstName": {
+    "first": {
       "type": "string",
       "minLength": 1,
       "maxLength": 30
     },
-    "lastName": {
+    "last": {
       "type": "string",
       "minLength": 1,
       "maxLength": 30
-    },
-    "email": {
-      "type": "string",
-      "minLength": 6,
-      "maxLength": 60,
-      "format": "email"
     },
     "isAdmin": {
       "type": "boolean"
     }
   },
   "additionalProperties": false,
-  "required": ["username", "firstName", "lastName", "password", "email"]
+  "required": ["username", "first", "last", "password"]
 }
