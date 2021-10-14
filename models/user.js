@@ -7,18 +7,19 @@ const { BCRYPT_WORK_FACTOR } = require("../config");
 class User {
   /** authenticate user with username, password.
    *
-   * Returns { username, first_name, last_name, is_admin }
+   * Returns:
+   * { username, first, last, is_admin }
    *
    * Throws UnauthorizedError is user not found or wrong password.
    **/
 
-  static async authenticate(username, password) {
+  static async authenticate({ username, password }) {
     // try to find the user first
     const result = await db.query(
       `SELECT username,
               password,
-              first_name AS "firstName",
-              last_name AS "lastName",
+              first,
+              last,
               is_admin AS "isAdmin"
        FROM users
        WHERE username = $1`,
@@ -41,19 +42,19 @@ class User {
 
   /** Register user with data.
    *
-   * Returns { username, firstName, lastName, isAdmin }
+   * Returns:
+   * { username, first, lastName, isAdmin }
    *
    * Throws BadRequestError on duplicates.
    **/
 
-  static async register({ username, password, firstName, lastName }) {
+  static async register({ username, password, first, last }) {
     const duplicateCheck = await db.query(
       `SELECT username
                FROM users
                WHERE username = $1`,
       [username]
     );
-    debugger;
 
     if (duplicateCheck.rows[0]) {
       throw new BadRequestError(`Duplicate username: ${username}`);
@@ -65,11 +66,11 @@ class User {
       `INSERT INTO users
                (username,
                 password,
-                first_name,
-                last_name)
+                first,
+                last)
                VALUES ($1, $2, $3, $4)
-               RETURNING username, first_name AS "firstName", last_name AS "lastName"`,
-      [username, hashedPassword, firstName, lastName]
+               RETURNING username, first, last, is_admin AS "isAdmin"`,
+      [username, hashedPassword, first, last]
     );
 
     const user = result.rows[0];

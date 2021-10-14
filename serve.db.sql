@@ -13,8 +13,8 @@ CREATE TABLE "users" (
   "password" text NOT NULL,
   "first" text,
   "last" text,
-  "active" bool NOT NULL,
-  "is_admin" bool NOT NULL
+  "active" bool NOT NULL DEFAULT true,
+  "is_admin" bool NOT NULL DEFAULT false
 );
 
 CREATE TABLE "user_qualified_roles" (
