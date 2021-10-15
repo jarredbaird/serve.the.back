@@ -38,7 +38,7 @@ router.post("/", async (req, res, next) => {
       { username: user.username, isAdmin: user.isAdmin },
       SECRET_KEY
     );
-    return res.status(201).json({ user, token });
+    return res.status(201).json({ token });
   } catch (err) {
     return next(err);
   }
