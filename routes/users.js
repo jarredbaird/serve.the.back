@@ -44,4 +44,14 @@ router.post("/", async (req, res, next) => {
   }
 });
 
+router.get("/:username", async (req, res, next) => {
+  debugger;
+  try {
+    const userInfo = await User.getUserInfo(req.params);
+    return res.status(201).json(userInfo);
+  } catch (e) {
+    return next(e);
+  }
+});
+
 module.exports = router;

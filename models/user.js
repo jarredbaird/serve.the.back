@@ -77,6 +77,14 @@ class User {
 
     return user;
   }
+
+  static async getUserInfo({ username }) {
+    const result = await db.query(
+      `SELECT username, first, last, is_admin FROM users WHERE username = $1;`,
+      [username]
+    );
+    return result.rows[0];
+  }
 }
 
 module.exports = User;
