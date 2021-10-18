@@ -6,6 +6,12 @@ DROP TABLE IF EXISTS event_templates CASCADE;
 DROP TABLE IF EXISTS scheduled_events CASCADE;
 DROP TABLE IF EXISTS scheduled_users CASCADE;
 DROP TABLE IF EXISTS privileges CASCADE;
+DROP TABLE IF EXISTS ministries CASCADE;
+
+CREATE TABLE "ministries" (
+  "m_id" SERIAL PRIMARY KEY,
+  "name" TEXT NOT NULL
+);
 
 CREATE TABLE "users" (
   "u_id" SERIAL PRIMARY KEY,
@@ -25,7 +31,8 @@ CREATE TABLE "user_qualified_roles" (
 
 CREATE TABLE "roles" (
   "r_id" SERIAL PRIMARY KEY,
-  "title" text NOT NULL
+  "title" text NOT NULL,
+  "ministry_id" int
 );
 
 CREATE TABLE "event_template_required_roles" (
@@ -37,7 +44,8 @@ CREATE TABLE "event_template_required_roles" (
 CREATE TABLE "event_templates" (
   "e_id" SERIAL PRIMARY KEY,
   "e_name" text NOT NULL,
-  "e_descr" text
+  "e_descr" text,
+  "ministry_id" int
 );
 
 CREATE TABLE "scheduled_events" (
@@ -69,3 +77,7 @@ ALTER TABLE "scheduled_events" ADD FOREIGN KEY ("e_id") REFERENCES "event_templa
 ALTER TABLE "scheduled_users" ADD FOREIGN KEY ("scheduled_event") REFERENCES "scheduled_events" ("se_id");
 
 ALTER TABLE "scheduled_users" ADD FOREIGN KEY ("u_id") REFERENCES "users" ("u_id");
+
+ALTER TABLE "roles" ADD FOREIGN KEY ("ministry_id") REFERENCES "ministries" ("m_id");
+
+ALTER TABLE "event_templates" ADD FOREIGN KEY ("ministry_id") REFERENCES "ministries" ("m_id");

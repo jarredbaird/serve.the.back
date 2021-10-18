@@ -26,4 +26,34 @@ function authenticateJWT(req, res, next) {
   }
 }
 
+function ensureLoggedIn(req, res, next) {
+  try {
+    if (!res.locals.user) throw new UnauthorizedError();
+    return next();
+  } catch (err) {
+    return next(err);
+  }
+}
+
+function ensureIsAdmin(req, res, next) {
+  try {
+    if (!res.locals.user || !res.locals.user.isAdmin)
+      throw new UnauthorizedError("User must have admin privileges");
+    return next();
+  } catch (err) {
+    return next(err);
+  }
+}
+
+function ensureIsUserOrAdmin(req, res, next) {
+  try {
+    const user = res.locals.user;
+    if (!(user && (user.isAdmin || user.username === req.params.username)))
+      throw new UnauthorizedError("You can only request your own information");
+    return next();
+  } catch (err) {
+    return next(err);
+  }
+}
+
 module.exports = { authenticateJWT };
