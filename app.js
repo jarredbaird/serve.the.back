@@ -10,6 +10,8 @@ const { NotFoundError } = require("./expressError");
 const { authenticateJWT } = require("./middleware/auth");
 const authRoutes = require("./middleware/token");
 const userRoutes = require("./routes/users");
+const eventTemplateRoutes = require("./routes/eventTemplates");
+const ministryRoutes = require("./routes/ministries");
 
 const morgan = require("morgan");
 
@@ -28,6 +30,8 @@ app.use(authenticateJWT);
 
 app.use("/users", userRoutes);
 app.use("/auth", authRoutes);
+app.use("/event-templates", eventTemplateRoutes);
+app.use("/ministries", ministryRoutes);
 
 /** Handle 404 errors -- this matches everything */
 app.use(function (req, res, next) {

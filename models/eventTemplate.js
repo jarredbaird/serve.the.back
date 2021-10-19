@@ -2,7 +2,7 @@ const db = require("../db");
 const { BadRequestError, UnauthorizedError } = require("../expressError");
 
 class EventTemplate {
-  static async createEventTemplate({ etName, etDescr, mId }) {
+  static async create({ etName, etDescr, mId }) {
     const duplicateCheck = await db.query(
       `SELECT et_name 
           FROM event_templates 
@@ -24,4 +24,4 @@ class EventTemplate {
   }
 }
 
-export default EventTemplate;
+module.exports = EventTemplate;
