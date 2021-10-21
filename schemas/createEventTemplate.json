@@ -9,10 +9,10 @@
     "etDescr": {
       "type": "string"
     },
-    "mId": {
-      "type": "integer"
+    "selectedRoles": {
+      "type": "array"
     }
   },
   "additionalProperties": false,
-  "required": ["etName", "etDescr", "mId"]
+  "required": ["etName", "etDescr", "selectedRoles"]
 }

@@ -2,25 +2,32 @@ const db = require("../db");
 const { BadRequestError, UnauthorizedError } = require("../expressError");
 
 class EventTemplate {
-  static async create({ etName, etDescr, mId }) {
+  static async create({ etName, etDescr, selectedRoles }) {
     const duplicateCheck = await db.query(
       `SELECT et_name 
           FROM event_templates 
-          WHERE lower(et_id) = $1`,
+          WHERE lower(et_name) = $1`,
       [etName.toLowerCase()]
     );
     if (duplicateCheck.rows[0]) {
       throw new BadRequestError(`Duplicate event template: ${etName}`);
     }
 
-    const insertAttempt = await db.query(
-      `INSERT INTO event_templates (et_name, et_descr, m_id)
-        VALUES ($1, $2, $3)
-        RETURNING et_id, et_name, et_descr, m_id`,
-      [etName, etDescr, mId]
+    const createEvent = await db.query(
+      `INSERT INTO event_templates (et_name, et_descr)
+        VALUES ($1, $2)
+        RETURNING et_id as "etId", et_name as etName, et_descr as etDescr`,
+      [etName, etDescr]
     );
 
-    return insertAttempt.rows[0];
+    for (let role of selectedRoles) {
+      await db.query(
+        `INSERT INTO event_template_required_roles (r_id, et_id) values ($1, $2)`,
+        [role.rId, createEvent.rows[0].etId]
+      );
+    }
+
+    return createEvent.rows[0];
   }
 }
 

@@ -14,6 +14,7 @@ const router = express.Router();
 /** Create a new event template */
 
 router.post("/", async (req, res, next) => {
+  debugger;
   try {
     const validator = jsonschema.validate(req.body, createEventTemplateSchema);
     if (!validator.valid) {
