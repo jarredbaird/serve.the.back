@@ -28,4 +28,13 @@ router.post("/", async (req, res, next) => {
   }
 });
 
+router.get("/", async (req, res, next) => {
+  try {
+    const results = await EventTemplate.getAll();
+    return res.status(200).json(results);
+  } catch (err) {
+    return next(err);
+  }
+});
+
 module.exports = router;

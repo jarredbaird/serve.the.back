@@ -85,6 +85,31 @@ class User {
     );
     return result.rows[0];
   }
+  static async getAll() {
+    const result = await db.query(
+      `SELECT 
+        u.username,
+        u.first, 
+        u.last, 
+        u.is_admin,
+        JSON_AGG(
+          JSON_BUILD_OBJECT(
+            'uId', u.u_id,
+            'rId', r.r_id,
+            'rTitle', r.r_title
+          )
+        ) as "qualifiedRoles"
+      FROM 
+        users u
+      LEFT JOIN user_qualified_roles uqr
+      ON uqr.u_id = u.u_id
+      LEFT JOIN roles r
+      ON r.r_id = uqr.r_id
+      GROUP BY u.username, u.first, u.last, u.is_admin
+      ORDER BY u.username`
+    );
+    return result.rows;
+  }
 }
 
 module.exports = User;

@@ -44,6 +44,15 @@ router.post("/", async (req, res, next) => {
   }
 });
 
+router.get("/", async (req, res, next) => {
+  try {
+    const results = await User.getAll();
+    return res.status(200).json(results);
+  } catch (err) {
+    return next(err);
+  }
+});
+
 router.get("/:username", async (req, res, next) => {
   try {
     const userInfo = await User.getUserInfo(req.params);

@@ -20,14 +20,45 @@ class EventTemplate {
       [etName, etDescr]
     );
 
+    const eventTemplateToReturn = { ...createEvent.rows[0], requiredRoles: [] };
+
     for (let role of selectedRoles) {
+      debugger;
       await db.query(
-        `INSERT INTO event_template_required_roles (r_id, et_id) values ($1, $2)`,
+        `INSERT INTO event_template_required_roles (r_id, et_id) 
+          values ($1, $2)`,
         [role.rId, createEvent.rows[0].etId]
       );
+      eventTemplateToReturn.requiredRoles.push({
+        rId: role.rId,
+        rTitle: role.rTitle,
+        mId: role.mId,
+      });
     }
 
-    return createEvent.rows[0];
+    return eventTemplateToReturn;
+  }
+  static async getAll() {
+    const results = await db.query(
+      `select 
+        et.et_id as "etId", 
+        et.et_name as "etName", 
+        et.et_descr as "etDescr", 
+        json_agg(
+          json_build_object(
+            'rId', r.r_id, 
+            'rTitle', r.r_title, 
+            'mId', r.m_id)) as "requiredRoles" 
+       from 
+        event_templates et 
+       left join event_template_required_roles etrr
+        on et.et_id = etrr.et_id 
+      left join roles r 
+        on etrr.r_id = r.r_id 
+      group by et.et_id, et.et_name, et.et_descr
+      order by et.et_name`
+    );
+    return results.rows;
   }
 }
 
