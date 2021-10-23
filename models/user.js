@@ -5,6 +5,31 @@ const { BadRequestError, UnauthorizedError } = require("../expressError");
 const { BCRYPT_WORK_FACTOR } = require("../config");
 
 class User {
+  static async getAll() {
+    const result = await db.query(
+      `SELECT 
+        u.username,
+        u.first, 
+        u.last, 
+        u.is_admin,
+        JSON_AGG(
+          JSON_BUILD_OBJECT(
+            'uId', u.u_id,
+            'rId', r.r_id,
+            'rTitle', r.r_title
+          )
+        ) as "qualifiedRoles"
+      FROM 
+        users u
+      LEFT JOIN user_qualified_roles uqr
+      ON uqr.u_id = u.u_id
+      LEFT JOIN roles r
+      ON r.r_id = uqr.r_id
+      GROUP BY u.username, u.first, u.last, u.is_admin
+      ORDER BY u.username`
+    );
+    return result.rows;
+  }
   /** authenticate user with username, password.
    *
    * Returns:
@@ -85,28 +110,20 @@ class User {
     );
     return result.rows[0];
   }
-  static async getAll() {
+
+  static async qualifyForRoles({ uId, qualifiedRoles }) {
+    const dataToInsert = qualifiedRoles.map((role) => {
+      return `(${uId}, ${role.rId})`;
+    });
+
     const result = await db.query(
-      `SELECT 
-        u.username,
-        u.first, 
-        u.last, 
-        u.is_admin,
-        JSON_AGG(
-          JSON_BUILD_OBJECT(
-            'uId', u.u_id,
-            'rId', r.r_id,
-            'rTitle', r.r_title
-          )
-        ) as "qualifiedRoles"
-      FROM 
-        users u
-      LEFT JOIN user_qualified_roles uqr
-      ON uqr.u_id = u.u_id
-      LEFT JOIN roles r
-      ON r.r_id = uqr.r_id
-      GROUP BY u.username, u.first, u.last, u.is_admin
-      ORDER BY u.username`
+      `INSERT INTO user_qualified_roles 
+        (u_id, r_id)
+       VALUES
+        $1
+       RETURNING
+         uqr_id`,
+      [dataToInsert.join(",")]
     );
     return result.rows;
   }

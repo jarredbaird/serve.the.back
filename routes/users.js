@@ -62,4 +62,13 @@ router.get("/:username", async (req, res, next) => {
   }
 });
 
+router.post("/qualify/:username", async (req, res, next) => {
+  try {
+    const results = await User.qualifyForRoles(req.params, req.body);
+    return res.status(201).json(userInfo);
+  } catch (e) {
+    return next(e);
+  }
+});
+
 module.exports = router;
