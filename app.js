@@ -13,6 +13,7 @@ const userRoutes = require("./routes/users");
 const eventTemplateRoutes = require("./routes/eventTemplates");
 const ministryRoutes = require("./routes/ministries");
 const roleRoutes = require("./routes/roles");
+const scheduledEventRoutes = require("./routes/scheduledEvents");
 
 const morgan = require("morgan");
 
@@ -34,6 +35,7 @@ app.use("/auth", authRoutes);
 app.use("/event-templates", eventTemplateRoutes);
 app.use("/ministries", ministryRoutes);
 app.use("/roles", roleRoutes);
+app.use("/scheduled-events", scheduledEventRoutes);
 
 /** Handle 404 errors -- this matches everything */
 app.use(function (req, res, next) {
