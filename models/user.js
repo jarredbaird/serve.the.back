@@ -8,15 +8,16 @@ class User {
   static async getAll() {
     const result = await db.query(
       `SELECT 
+        u.u_id AS "uId",
         u.username,
         u.first, 
         u.last, 
         u.is_admin,
         JSON_AGG(
           JSON_BUILD_OBJECT(
-            'uId', u.u_id,
             'rId', r.r_id,
-            'rTitle', r.r_title
+            'rTitle', r.r_title,
+            'mId', r.m_id
           )
         ) as "qualifiedRoles"
       FROM 
@@ -25,7 +26,7 @@ class User {
       ON uqr.u_id = u.u_id
       LEFT JOIN roles r
       ON r.r_id = uqr.r_id
-      GROUP BY u.username, u.first, u.last, u.is_admin
+      GROUP BY u.u_id, u.username, u.first, u.last, u.is_admin
       ORDER BY u.username`
     );
     return result.rows;
@@ -105,27 +106,28 @@ class User {
 
   static async getUserInfo({ username }) {
     const result = await db.query(
-      `SELECT username, first, last, is_admin FROM users WHERE username = $1;`,
+      `SELECT u_id as "uId", username, first, last, is_admin FROM users WHERE username = $1;`,
       [username]
     );
     return result.rows[0];
   }
 
-  static async qualifyForRoles({ uId, qualifiedRoles }) {
-    const dataToInsert = qualifiedRoles.map((role) => {
-      return `(${uId}, ${role.rId})`;
-    });
-
-    const result = await db.query(
-      `INSERT INTO user_qualified_roles 
-        (u_id, r_id)
-       VALUES
-        $1
-       RETURNING
-         uqr_id`,
-      [dataToInsert.join(",")]
-    );
-    return result.rows;
+  static async qualifyForRoles(uId, qualifiedRoles) {
+    debugger;
+    const newAddedRoles = [];
+    for await (let role of qualifiedRoles) {
+      const result = await db.query(
+        `INSERT INTO user_qualified_roles 
+          (u_id, r_id)
+         VALUES
+          ($1, $2)
+         RETURNING
+           uqr_id`,
+        [uId, role.rId]
+      );
+      newAddedRoles.push(result.rows[0]);
+    }
+    return newAddedRoles;
   }
 }
 
