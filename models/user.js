@@ -113,7 +113,6 @@ class User {
   }
 
   static async qualifyForRoles(uId, qualifiedRoles) {
-    debugger;
     const newAddedRoles = [];
     for await (let role of qualifiedRoles) {
       const result = await db.query(

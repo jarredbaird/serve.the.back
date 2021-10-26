@@ -23,7 +23,6 @@ class EventTemplate {
     const eventTemplateToReturn = { ...createEvent.rows[0], requiredRoles: [] };
 
     for (let role of selectedRoles) {
-      debugger;
       await db.query(
         `INSERT INTO event_template_required_roles (r_id, et_id) 
           values ($1, $2)`,
