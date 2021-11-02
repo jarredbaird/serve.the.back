@@ -106,7 +106,7 @@ class User {
 
   static async getUserInfo({ username }) {
     const result = await db.query(
-      `SELECT u_id as "uId", username, first, last, is_admin FROM users WHERE username = $1;`,
+      `SELECT u_id as "uId", username, first, last, is_admin AS "isAdmin" FROM users WHERE username = $1;`,
       [username]
     );
     return result.rows[0];
@@ -122,7 +122,7 @@ class User {
           ($1, $2)
          RETURNING
            uqr_id`,
-        [uId, role.rId]
+        [uId, role]
       );
       newAddedRoles.push(result.rows[0]);
     }

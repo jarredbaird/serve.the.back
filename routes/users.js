@@ -63,6 +63,7 @@ router.get("/:username", async (req, res, next) => {
 });
 
 router.post("/qualify/:uId", async (req, res, next) => {
+  debugger;
   try {
     const results = await User.qualifyForRoles(req.params.uId, req.body);
     return res.status(201).json(results);
