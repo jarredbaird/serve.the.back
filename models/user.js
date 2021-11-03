@@ -27,7 +27,7 @@ class User {
       LEFT JOIN roles r
       ON r.r_id = uqr.r_id
       GROUP BY u.u_id, u.username, u.first, u.last, u.is_admin
-      ORDER BY u.username`
+      ORDER BY u.first`
     );
     return result.rows;
   }
