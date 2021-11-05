@@ -36,4 +36,13 @@ router.get("/", async (req, res, next) => {
   }
 });
 
+router.get("/roles", async (req, res, next) => {
+  try {
+    const results = await ScheduledEvent.getAllRequiredRoles();
+    return res.status(200).json(results);
+  } catch (err) {
+    return next(err);
+  }
+});
+
 module.exports = router;

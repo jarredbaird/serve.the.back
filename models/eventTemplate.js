@@ -26,10 +26,10 @@ class EventTemplate {
       await db.query(
         `INSERT INTO event_template_required_roles (r_id, et_id) 
           values ($1, $2)`,
-        [role.rId, createEvent.rows[0].etId]
+        [role, createEvent.rows[0].etId]
       );
       eventTemplateToReturn.requiredRoles.push({
-        rId: role.rId,
+        rId: role,
         rTitle: role.rTitle,
         mId: role.mId,
       });

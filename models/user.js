@@ -106,7 +106,32 @@ class User {
 
   static async getUserInfo({ username }) {
     const result = await db.query(
-      `SELECT u_id as "uId", username, first, last, is_admin AS "isAdmin" FROM users WHERE username = $1;`,
+      `SELECT 
+         u.u_id as "uId", 
+         u.username, 
+         u.first || ' ' || u.last AS "uName", 
+         u.is_admin AS "isAdmin",
+         JSON_AGG(
+           JSON_BUILD_OBJECT(
+             'rId', r.r_id,
+             'rTitle', r.r_title,
+             'mId', r.m_id
+           )
+         ) as "qualifiedRoles"
+       FROM 
+         users u
+       LEFT JOIN user_qualified_roles uqr
+       ON uqr.u_id = u.u_id 
+       LEFT JOIN roles r
+       ON r.r_id = uqr.r_id
+       WHERE 
+         username = $1
+       GROUP BY 
+         u.u_id, 
+         u.username, 
+         u.first, 
+         u.last, 
+         u.is_admin`,
       [username]
     );
     return result.rows[0];

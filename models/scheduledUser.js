@@ -31,9 +31,25 @@ class ScheduledUser {
         su.su_id as "suId",
         su.se_id as "seId",
         su.etrr_id as "etrrId",
-        su.u_id as "uId"
+        su.u_id as "uId",
+        se.start_time as "startTime",
+        se.end_time as "endTime",
+        et.et_name as "etName",
+        r.r_title as "rTitle",
+        u.first || ' ' || u.last as "uName",
+        u.username
        from 
         scheduled_users su
+       left join scheduled_events se
+       on su.se_id = se.se_id
+       left join event_template_required_roles etrr
+       on etrr.etrr_id = su.etrr_id
+       left join event_templates et
+       on etrr.et_id = et.et_id
+       left join roles r
+       on r.r_id = etrr.r_id
+       left join users u
+       on u.u_id = su.u_id
        `
     );
     return results.rows;

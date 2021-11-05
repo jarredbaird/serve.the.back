@@ -56,7 +56,7 @@ router.get("/", async (req, res, next) => {
 router.get("/:username", async (req, res, next) => {
   try {
     const userInfo = await User.getUserInfo(req.params);
-    return res.status(201).json(userInfo);
+    return res.status(200).json(userInfo);
   } catch (e) {
     return next(e);
   }
