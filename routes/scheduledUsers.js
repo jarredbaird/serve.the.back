@@ -27,6 +27,20 @@ router.post("/", async (req, res, next) => {
   }
 });
 
+router.delete("/", async (req, res, next) => {
+  try {
+    const validator = jsonschema.validate(req.body, createScheduledUserSchema);
+    if (!validator.valid) {
+      const errs = validator.errors.map((e) => e.stack);
+      throw new BadRequestError(errs);
+    }
+    const deletedScheduledUser = await ScheduledUser.delete(req.body);
+    return res.status(202).json(deletedScheduledUser);
+  } catch (err) {
+    return next(err);
+  }
+});
+
 router.get("/", async (req, res, next) => {
   try {
     const results = await ScheduledUser.getAll();

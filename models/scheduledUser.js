@@ -25,6 +25,21 @@ class ScheduledUser {
 
     return createdScheduledUser.rows[0];
   }
+
+  static async delete({ seId, etrrId, uId }) {
+    const deletedScheduledUser = await db.query(
+      `delete from scheduled_users su
+       where 1=1
+         and su.se_id = $1 
+         and su.etrr_id = $2 
+         and su.u_id = $3
+       RETURNING su_id as "suId", se_id as "seId", etrr_id as "etrrId", u_id as "uId"`,
+      [seId, etrrId, uId]
+    );
+
+    return deletedScheduledUser.rows;
+  }
+
   static async getAll() {
     const results = await db.query(
       `select 

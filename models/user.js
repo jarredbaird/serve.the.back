@@ -10,8 +10,7 @@ class User {
       `SELECT 
         u.u_id AS "uId",
         u.username,
-        u.first, 
-        u.last, 
+        u.first || ' ' || u.last AS "uName", 
         u.is_admin,
         JSON_AGG(
           JSON_BUILD_OBJECT(

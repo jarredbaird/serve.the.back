@@ -15,6 +15,7 @@ const ministryRoutes = require("./routes/ministries");
 const roleRoutes = require("./routes/roles");
 const scheduledEventRoutes = require("./routes/scheduledEvents");
 const scheduledUserRoutes = require("./routes/scheduledUsers");
+const qualifiedScheduledRolesRoutes = require("./routes/qualifiedScheduledRoles");
 
 const morgan = require("morgan");
 
@@ -38,6 +39,7 @@ app.use("/ministries", ministryRoutes);
 app.use("/roles", roleRoutes);
 app.use("/scheduled-events", scheduledEventRoutes);
 app.use("/scheduled-users", scheduledUserRoutes);
+app.use("/schedule-user", qualifiedScheduledRolesRoutes);
 
 /** Handle 404 errors -- this matches everything */
 app.use(function (req, res, next) {
