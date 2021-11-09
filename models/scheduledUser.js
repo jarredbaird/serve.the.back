@@ -69,6 +69,42 @@ class ScheduledUser {
     );
     return results.rows;
   }
+
+  static async getOne({ uId }) {
+    const results = await db.query(
+      `
+       select 
+         su.u_id as "uId",
+         su.se_id as "seId",
+         se.location,
+         se.start_time as "startTime",
+         se.end_time as "endTime",
+         et.et_name as "etName",
+         r.r_id as "rId",
+         r.r_title as "rTitle"
+       from 
+         scheduled_users su
+         
+       left join scheduled_events se
+       on se.se_id = su.se_id
+       
+       left join event_templates et
+       on se.et_id = et.et_id
+       
+       left join event_template_required_roles etrr
+       on etrr.etrr_id = su.etrr_id
+       and etrr.et_id = et.et_id
+       
+       left join roles r
+       on etrr.r_id = r.r_id
+       
+       where u_id = $1
+       
+       order by se.start_time`,
+      [uId]
+    );
+    return results.rows;
+  }
 }
 
 module.exports = ScheduledUser;

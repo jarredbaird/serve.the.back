@@ -50,4 +50,13 @@ router.get("/", async (req, res, next) => {
   }
 });
 
+router.get("/:uId", async (req, res, next) => {
+  try {
+    const results = await ScheduledUser.getOne(req.params);
+    return res.status(200).json(results);
+  } catch (err) {
+    return next(err);
+  }
+});
+
 module.exports = router;
