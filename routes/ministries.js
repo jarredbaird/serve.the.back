@@ -4,17 +4,33 @@
 
 const jsonschema = require("jsonschema");
 const express = require("express");
-const { ensureCorrectUserOrAdmin, ensureAdmin } = require("../middleware/auth");
-const { BadRequestError, UnauthorizedError } = require("../expressError");
+const { ensureIsAdmin } = require("../middleware/auth");
+const { BadRequestError } = require("../expressError");
 const Ministry = require("../models/ministry");
+const createMinistrySchema = require("../schemas/createMinistry.json");
 
 const router = express.Router();
 
-/** Create a new event template */
+/** get allll ministries */
 
-router.get("/", async (req, res, next) => {
+router.get("/", ensureIsAdmin, async (req, res, next) => {
   try {
     const results = await Ministry.getAll();
+    return res.status(201).json(results);
+  } catch (err) {
+    return next(err);
+  }
+});
+
+/* Create a new ministry */
+router.post("/", ensureIsAdmin, async (req, res, next) => {
+  try {
+    const validator = jsonschema.validate(req.body, createMinistrySchema);
+    if (!validator.valid) {
+      const errs = validator.errors.map((e) => e.stack);
+      throw new BadRequestError(errs);
+    }
+    const results = await Ministry.create(req.body);
     return res.status(201).json(results);
   } catch (err) {
     return next(err);

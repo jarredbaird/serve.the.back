@@ -21,16 +21,15 @@ const morgan = require("morgan");
 
 const app = express();
 
-app.get("/", async function (req, res, next) {
-  console.log("root route is working");
-  return res.status(201).json({ name: "jarred" });
-});
-// yes
-
 app.use(cors());
 app.use(express.json());
 app.use(morgan("tiny"));
 app.use(authenticateJWT);
+
+app.get("/", authenticateJWT, async function (req, res, next) {
+  console.log("root route is working");
+  return res.status(201).json({ name: "jarred" });
+});
 
 app.use("/users", userRoutes);
 app.use("/auth", authRoutes);

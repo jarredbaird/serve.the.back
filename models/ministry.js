@@ -12,6 +12,17 @@ class Ministry {
     });
     return ministries;
   }
+
+  static async create({ mName }) {
+    const results = await db.query(
+      `
+      INSERT INTO ministries (m_name) 
+      VALUES ($1)
+      RETURNING m_id AS "mId", m_name AS "mName"`,
+      [mName]
+    );
+    return results.rows[0];
+  }
 }
 
 module.exports = Ministry;

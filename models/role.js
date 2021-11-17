@@ -20,6 +20,11 @@ class Role {
     });
     return roles;
   }
+
+  static async create({ rId, mId }) {
+    //// left off HERE
+    return { rId, mId };
+  }
 }
 
 module.exports = Role;

@@ -4,8 +4,8 @@
 
 const jsonschema = require("jsonschema");
 const express = require("express");
-const { ensureCorrectUserOrAdmin, ensureAdmin } = require("../middleware/auth");
-const { BadRequestError, UnauthorizedError } = require("../expressError");
+const { ensureLoggedIn, ensureIsAdmin } = require("../middleware/auth");
+const { BadRequestError } = require("../expressError");
 const EventTemplate = require("../models/eventTemplate");
 const createEventTemplateSchema = require("../schemas/createEventTemplate.json");
 
@@ -13,8 +13,7 @@ const router = express.Router();
 
 /** Create a new event template */
 
-router.post("/", async (req, res, next) => {
-  debugger;
+router.post("/", ensureIsAdmin, async (req, res, next) => {
   try {
     const validator = jsonschema.validate(req.body, createEventTemplateSchema);
     if (!validator.valid) {
@@ -28,7 +27,7 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-router.get("/", async (req, res, next) => {
+router.get("/", ensureLoggedIn, async (req, res, next) => {
   try {
     const results = await EventTemplate.getAll();
     return res.status(200).json(results);

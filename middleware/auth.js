@@ -16,12 +16,21 @@ const { SECRET_KEY } = require("../config");
 function authenticateJWT(req, res, next) {
   try {
     const authHeader = req.headers && req.headers.authorization;
+    console.debug("authHeader", authHeader);
     if (authHeader) {
       const token = authHeader.replace(/^[Bb]earer /, "").trim();
       res.locals.user = jwt.verify(token, SECRET_KEY);
     }
+    console.debug(
+      "No error!! Here is the authenticateJWT. res.locals.user = ",
+      res.locals.user
+    );
     return next();
   } catch (err) {
+    console.debug(
+      "Error!! Here is the authenticateJWT. res.locals.user = ",
+      res.locals.user
+    );
     return next();
   }
 }
@@ -56,4 +65,9 @@ function ensureIsUserOrAdmin(req, res, next) {
   }
 }
 
-module.exports = { authenticateJWT };
+module.exports = {
+  authenticateJWT,
+  ensureIsAdmin,
+  ensureIsUserOrAdmin,
+  ensureLoggedIn,
+};
