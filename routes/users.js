@@ -22,18 +22,13 @@ router.post("/", async (req, res, next) => {
       const errs = validator.errors.map((e) => e.stack);
       throw new BadRequestError(errs);
     }
-    let user;
     const adminRequest =
       res.locals && res.locals.user && res.locals.user.isAdmin;
-    if (req.body.isAdmin) {
-      if (adminRequest) {
-        user = await User.register(req.body);
-      } else {
-        throw new UnauthorizedError("Unauthorized");
-      }
+    if (req.body.isAdmin && !adminRequest) {
+      throw new UnauthorizedError("Unauthorized");
     }
 
-    user = await User.register(req.body);
+    const user = await User.register(req.body);
     const token = jwt.sign(
       { username: user.username, isAdmin: user.isAdmin },
       SECRET_KEY
@@ -63,7 +58,6 @@ router.get("/:username", async (req, res, next) => {
 });
 
 router.post("/qualify/:uId", async (req, res, next) => {
-  debugger;
   try {
     const results = await User.qualifyForRoles(req.params.uId, req.body);
     return res.status(201).json(results);

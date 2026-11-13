@@ -1,6 +1,6 @@
 function camelCaseKeys(obj) {
   var newObj = {};
-  for (d in obj) {
+  for (const d in obj) {
     if (obj.hasOwnProperty(d)) {
       newObj[
         d.replace(/(\_\w)/g, function (k) {

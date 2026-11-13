@@ -16,7 +16,7 @@ class EventTemplate {
     const createEvent = await db.query(
       `INSERT INTO event_templates (et_name, et_descr)
         VALUES ($1, $2)
-        RETURNING et_id as "etId", et_name as etName, et_descr as etDescr`,
+        RETURNING et_id as "etId", et_name as "etName", et_descr as "etDescr"`,
       [etName, etDescr]
     );
 
