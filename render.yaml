@@ -1,0 +1,37 @@
+# Render Blueprint: deploys the API and the React site together.
+# Render dashboard → New → Blueprint → pick this repo.
+# You'll be prompted for DATABASE_URL (your Neon connection string).
+services:
+  - type: web
+    name: serve-api
+    runtime: node
+    plan: free
+    repo: https://github.com/jarredbaird/serve.the.back
+    branch: main
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false # asked for at setup; paste the Neon connection string
+      - key: SECRET_KEY
+        generateValue: true # Render makes a random JWT secret
+      - key: CORS_ORIGIN
+        value: https://serve-web.onrender.com
+
+  - type: web
+    name: serve-web
+    runtime: static
+    repo: https://github.com/jarredbaird/serve.the.front
+    branch: main
+    buildCommand: npm ci && npm run build
+    staticPublishPath: build
+    envVars:
+      - key: VITE_API_URL
+        value: https://serve-api.onrender.com
+    routes:
+      - type: rewrite # let React Router handle /home, /signin, etc.
+        source: /*
+        destination: /index.html
