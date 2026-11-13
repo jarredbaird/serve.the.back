@@ -7,6 +7,7 @@ const router = new express.Router();
 const userSignInSchema = require("../schemas/userSignIn.json");
 const jwt = require("jsonwebtoken");
 const { SECRET_KEY } = require("../config");
+const { BadRequestError } = require("../expressError");
 
 router.post("/get-token", async (req, res, next) => {
   try {

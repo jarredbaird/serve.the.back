@@ -5,6 +5,7 @@
 const express = require("express");
 const cors = require("cors");
 
+const db = require("./db");
 const { NotFoundError } = require("./expressError");
 
 const { authenticateJWT } = require("./middleware/auth");
@@ -21,14 +22,19 @@ const morgan = require("morgan");
 
 const app = express();
 
-app.use(cors());
+// In production, only accept browser requests from the deployed frontend.
+app.use(cors(process.env.CORS_ORIGIN ? { origin: process.env.CORS_ORIGIN.split(",") } : {}));
 app.use(express.json());
 app.use(morgan("tiny"));
 app.use(authenticateJWT);
 
-app.get("/", authenticateJWT, async function (req, res, next) {
-  console.log("root route is working");
-  return res.status(201).json({ name: "jarred" });
+app.get("/health", async function (req, res, next) {
+  try {
+    await db.query("SELECT 1");
+    return res.json({ ok: true });
+  } catch (err) {
+    return next(err);
+  }
 });
 
 app.use("/users", userRoutes);
