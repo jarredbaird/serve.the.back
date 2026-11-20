@@ -3,8 +3,7 @@
 /** Routes for users. */
 
 const jsonschema = require("jsonschema");
-const jwt = require("jsonwebtoken");
-const { SECRET_KEY } = require("../config");
+const { createToken } = require("../helpers/tokens");
 const express = require("express");
 const { ensureCorrectUserOrAdmin, ensureAdmin } = require("../middleware/auth");
 const { BadRequestError, UnauthorizedError } = require("../expressError");
@@ -29,10 +28,7 @@ router.post("/", async (req, res, next) => {
     }
 
     const user = await User.register(req.body);
-    const token = jwt.sign(
-      { username: user.username, isAdmin: user.isAdmin },
-      SECRET_KEY
-    );
+    const token = createToken(user);
     return res.status(201).json({ token });
   } catch (err) {
     return next(err);
