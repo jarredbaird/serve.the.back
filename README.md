@@ -17,3 +17,7 @@ Seeded logins (password is `password` for all):
 - volunteers: `<first>.<last>@serve.test`, e.g. `sarah.mitchell@serve.test`
 
 Config comes from env vars (see `.env.example`): `DATABASE_URL`, `SECRET_KEY`, `PORT`, `NODE_ENV`.
+
+## Permissions
+
+Who may call each endpoint, and which endpoints are not yet enforced: [docs/permissions.md](docs/permissions.md).
