@@ -2,15 +2,13 @@
 
 /** Seed the database with realistic church-volunteer data.
  *
- *   npm run db:reset   → recreate tables from serve.db.sql, then run this
+ *   npm run db:reset   → roll back + re-apply all migrations, then run this
  *   npm run seed       → just run this (wipes existing rows first)
  *
  * Every seeded user's password is "password" (or $SEED_PASSWORD if set).
  * Admin login: admin@serve.test / password
  */
 
-const fs = require("fs");
-const path = require("path");
 const bcrypt = require("bcrypt");
 const db = require("./db");
 
@@ -81,8 +79,6 @@ function nextDate(weekday, hh, mm, weeksFromNow) {
 const plusMinutes = (d, m) => new Date(d.getTime() + m * 60000);
 
 async function seed() {
-  const schema = fs.readFileSync(path.join(__dirname, "serve.db.sql"), "utf8");
-  if (process.argv.includes("--reset")) await db.query(schema);
   await db.query(
     `TRUNCATE scheduled_users, scheduled_events, event_template_required_roles,
               event_templates, user_qualified_roles, roles, users, ministries

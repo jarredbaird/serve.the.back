@@ -7,7 +7,10 @@
     "start": "node server.js",
     "dev": "node --watch server.js",
     "seed": "node seed.js",
-    "db:reset": "node seed.js --reset"
+    "db:reset": "node migrate.js reset && node seed.js",
+    "migrate": "node migrate.js up",
+    "migrate:down": "node migrate.js down",
+    "migrate:create": "node-pg-migrate create -j js -m migrations"
   },
   "repository": {
     "type": "git",
@@ -28,6 +31,7 @@
     "jsonschema": "^1.4.0",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
+    "node-pg-migrate": "^9.0.0",
     "pg": "^8.7.1"
   },
   "engines": {
