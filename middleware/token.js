@@ -5,8 +5,7 @@ const User = require("../models/user");
 const express = require("express");
 const router = new express.Router();
 const userSignInSchema = require("../schemas/userSignIn.json");
-const jwt = require("jsonwebtoken");
-const { SECRET_KEY } = require("../config");
+const { createToken } = require("../helpers/tokens");
 const { BadRequestError } = require("../expressError");
 
 router.post("/get-token", async (req, res, next) => {
@@ -18,10 +17,7 @@ router.post("/get-token", async (req, res, next) => {
     }
 
     const user = await User.authenticate(req.body);
-    const token = jwt.sign(
-      { username: user.username, isAdmin: user.isAdmin },
-      SECRET_KEY
-    );
+    const token = createToken(user);
     return res.status(201).json({ user, token });
   } catch (e) {
     return next(e);
